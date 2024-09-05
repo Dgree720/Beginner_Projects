@@ -13,6 +13,7 @@ def add_food(user, current_date):
 
 
 #This is a test
+#This is test 2
 
 def add_activity():
     pass
