@@ -1,41 +1,78 @@
 import pandas as pd
 import time
-import csv
 import sqlite3
 from datetime import datetime, date
-from user import get_reg_users
-from user import add_user
-from user import request_username
+from user_management import get_reg_users
+from user_management import add_user
+from user_management import request_username
+from user import User
+import row_management
 
-def add_food(user, current_date):
-    connector = sqlite3.connect("CalorieTracker_DB.sqlite")
-    cursor = connector.cursor()
+db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
 
-#This is a test
-#This is test 2
+
+def add_food(name, current_date):
+    row_management.add_new_row_if_necessary()
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    print("Adding foods under construction")
+
 
 def add_activity():
-    pass
+    row_management.add_new_row_if_necessary()
+    print("Activity addition under construction")
 
 
-def show_remaining_cals(user):
-    connection = sqlite3.connect("D:\\DataBase\\CalorieTracker_DB.sqlite")
+def show_remaining_cals(name):
+    connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute(f"SELECT RemainingCalories FROM CalorieTracking WHERE User = ?", (user,))
-    rows = cursor.fetchall()
-    print(f"Your remaining calories for today are {rows[0][0]}")
+    cursor.execute(f"SELECT RemainingCalories FROM Tracking WHERE User = ?", (name,))
+    remaining_cals = cursor.fetchall()
+    return remaining_cals
+
+
+def view_progress(name):
+    user = name
+    user = User(user)
+    print(user.height)
+
+
+def update_weight_progress(user, current_date):
+    # adding row for today's date
+    row_management.add_new_row_if_necessary()
+    while True:
+        print("Great! Do you want to..."
+              "\n1. add a weight for today"
+              "\n2. add weights for days in the past")
+        try:
+            user_cmd = input("Select: ")
+        except ValueError:
+            print("please enter a valid selection")
+            continue
+        if user_cmd not in [1, 2]:
+            print("please enter a valid selection")
+            continue
+        else:
+            break
+    if user_cmd == 1:
+        new_weight = input(f"\n Weight for {current_date}:")
+    else:
+        print("not done")
 
 
 
 
-def view_progress():
-    pass
 
-
-def update_weight_progress():
-    pass
 
 
 def show_dashboard():
-    pass
+    print("_"*75)
+
+
+def change_profile():
+    print("change profile under construction")
+
+
+def delete_user():
+    print("delete profile under construction")
