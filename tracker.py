@@ -1,9 +1,10 @@
 import pandas as pd
-import time
+from datetime import datetime, date
 import csv
 from user_management import get_reg_users
 from user_management import add_user
 from user_management import request_username
+from user_management import check_user
 from general_functions import clear_terminal
 import functionalities
 
@@ -19,9 +20,10 @@ def main():
         5: "Edit User Profile",
         6: "Delete User Profile"
     }
+    current_date = date.today()
     reg_users = get_reg_users()
-    while not request_username(reg_users):
-        reg_users = get_reg_users()
+    user = request_username()
+    while not check_user(user, reg_users):
         add_user(reg_users)
         break
     print("What would you like to do?\n")

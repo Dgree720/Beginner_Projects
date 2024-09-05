@@ -46,7 +46,7 @@ def update_weight_progress(user, current_date):
               "\n1. add a weight for today"
               "\n2. add weights for days in the past")
         try:
-            user_cmd = input("Select: ")
+            user_cmd = int(input("Select: "))
         except ValueError:
             print("please enter a valid selection")
             continue
@@ -56,7 +56,20 @@ def update_weight_progress(user, current_date):
         else:
             break
     if user_cmd == 1:
-        new_weight = input(f"\n Weight for {current_date}:")
+        while True:
+            try:
+                new_weight = int(input(f"\nWeight for {current_date}: "))
+            except ValueError:
+                print("please enter a valid weight")
+            if not 30 < new_weight < 200:
+                print("please enter a valid weight")
+            else:
+                break
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        cursor.execute("UPDATE Tracking SET CurrentWeight = ? WHERE User = ? AND Date = ?",
+                       (new_weight, user, current_date))
+        connection.commit()
     else:
         print("not done")
 

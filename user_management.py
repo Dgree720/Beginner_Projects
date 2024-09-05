@@ -16,24 +16,36 @@ def get_reg_users():
     return reg_users
 
 
-def request_username(reg_users):
+def request_username():
     while True:
-        user = input("Hi! What is your Name?: ").strip().lower().title()
-        if user not in reg_users:
-            while True:
-                user_cmd = input("Looks like you're not registered yet. Do you want to register? ").strip().lower()
-                if user_cmd in ["yes", "no"]:
-                    if user_cmd == "no":
-                        quit("Alright then! Have a nice day!")
-                    elif user_cmd == "yes":
-                        return False
-                else:
-                    print("mh, i don't understand. Please type 'yes' or 'no'")
-                    continue
-        else:
-            print(f"Welcome back {user}")
+        try:
+            user = input("Hi! What is your Name?: ").strip().lower().title()
             break
+        except ValueError:
+            print("Please enter a valid name")
+            continue
+    return user
+
+
+def check_user(user, reg_users):
+    if user not in reg_users:
+        while True:
+            try:
+                user_cmd = input("Looks like you're not registered yet. Do you want to register? (ys/no): ").strip().lower()
+            except ValueError:
+                print("mh, i don't understand. Please type 'yes' or 'no'")
+            if user_cmd in ["yes", "no"]:
+                if user_cmd == "no":
+                    quit("Alright then! Have a nice day!")
+                elif user_cmd == "yes":
+                    return False
+            else:
+                print("mh, i don't understand. Please type 'yes' or 'no'")
+                continue
+    else:
+        print(f"Welcome back {user}")
     return True, user
+
 
 
 def user_name(user):
