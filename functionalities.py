@@ -12,7 +12,7 @@ def add_food(user, current_date):
     cursor = connector.cursor()
 
 
-
+#This is a test
 
 def add_activity():
     pass
