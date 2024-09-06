@@ -72,6 +72,25 @@ def update_weight_progress(user, current_date):
         connection.commit()
     else:
         print("not done")
+        while True:
+            try:
+                while True:
+                    date = input("Date: ")
+                    weight = input("Weight: ")
+                    if 30 > weight > 200:
+                        print("please enter a valid weight")
+                        continue
+                        # logik einfügen die beide 
+                        # Einträge überprüft und 
+                        # neu prompt
+                # für jede iteration bis
+                # EOFError, muss neue zeile
+                # mit User, Datum und 
+                # Gewicht in DB eingefügt werden
+            except EOFError:
+                
+            
+    
 
 
 
