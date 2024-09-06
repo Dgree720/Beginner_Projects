@@ -7,6 +7,7 @@ from user_management import request_username
 from user_management import check_user
 from general_functions import clear_terminal
 import functionalities
+from user import User
 
 
 
@@ -14,10 +15,12 @@ import functionalities
 def main():
     current_date = date.today()
     reg_users = get_reg_users()
-    user = request_username()
-    while not check_user(user, reg_users):
+    name = request_username()
+    while not check_user(name, reg_users):
         add_user(reg_users)
         break
+    # create instance of User Class
+    user = User(name)
     user_cmd = menu_options(user, current_date)
 
 
@@ -64,13 +67,13 @@ def menu_options(user, current_date):
         functionalities.update_weight_progress(user, current_date)
         menu_options(user, current_date)
     elif user_cmd == 3:
-        functionalities.add_food()
+        functionalities.add_food(user,current_date)
         menu_options(user, current_date)
     elif user_cmd == 4:
-        functionalities.add_activity()
+        functionalities.add_activity(user)
         menu_options(user, current_date)
     elif user_cmd == 5:
-        functionalities.change_profile()
+        functionalities.edit_profile()
         menu_options(user, current_date)
     elif user_cmd == 6:
         functionalities.delete_user()

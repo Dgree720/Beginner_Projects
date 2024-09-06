@@ -11,29 +11,33 @@ from user import User
 db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
 
-def add_new_row_if_necessary():
-    user = User("Andi")
+def add_new_row_if_necessary(user):
     current_date = date.today()
-    if is_new_day(get_most_recent_row(), current_date):
+    sorted_dates = get_all_lines(user)
+    if is_new_day(get_most_recent_row(sorted_dates), current_date):
         create_new_row(user, current_date)
 
 
 
-def get_most_recent_row():
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT Date FROM Tracking WHERE User = ?", ("Andi",))
-    rows = cursor.fetchall()
-    unpacked_rows = [rows[x][0] for x in range(len(rows))]
-    date_objects = sorted([datetime.strptime(row, "%Y-%m-%d").date() for row in unpacked_rows], reverse = True)
-    sorted_dates = [date.strftime("%Y-%m-%d") for date in date_objects]
-    most_recent_row = datetime.strptime(sorted_dates[0], "%Y-%m-%d")
-    connection.close()
+def get_most_recent_row(sorted_dates):
+    most_recent_row = datetime.strptime(sorted_dates[0], "%Y-%m-%d").date()
     return most_recent_row
 
 
+def get_all_lines(user):
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT Date FROM Tracking WHERE User = ?", (user.name,))
+    rows = cursor.fetchall()
+    unpacked_rows = [rows[x][0] for x in range(len(rows))]
+    date_objects = sorted([datetime.strptime(row, "%Y-%m-%d").date() for row in unpacked_rows], reverse=True)
+    sorted_dates = [date.strftime("%Y-%m-%d") for date in date_objects]
+    connection.close()
+    return sorted_dates
+
+
 def is_new_day(most_recent_row, current_date):
-    if most_recent_row.date() < current_date:
+    if most_recent_row < current_date:
         return True
     else:
         return False
@@ -51,6 +55,6 @@ def create_new_row(user, current_date):
 
 
 if __name__ == "__main__":
-    add_new_row_if_necessary()
+    add_new_row_if_necessary("Andi")
 
 

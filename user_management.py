@@ -19,16 +19,16 @@ def get_reg_users():
 def request_username():
     while True:
         try:
-            user = input("Hi! What is your Name?: ").strip().lower().title()
+            name = input("Hi! What is your Name?: ").strip().lower().title()
             break
         except ValueError:
             print("Please enter a valid name")
             continue
-    return user
+    return name
 
 
-def check_user(user, reg_users):
-    if user not in reg_users:
+def check_user(name, reg_users):
+    if name not in reg_users:
         while True:
             try:
                 user_cmd = input("Looks like you're not registered yet. Do you want to register? (ys/no): ").strip().lower()
@@ -44,14 +44,8 @@ def check_user(user, reg_users):
                 continue
     else:
         print("_"*75, "\n\n")
-        print(f""*20, f"Welcome back {user}!")
-    return True, user
-
-
-
-def user_name(user):
-    return user
-
+        print(f""*20, f"Welcome back {name}!")
+    return True
 
 
 # need to implement
@@ -165,8 +159,8 @@ def add_user(reg_users):
     cursor = connection.cursor()
     cursor.execute("INSERT INTO Users (Name, Age, Gender, Height, Weight, WeightGoal, ActivityLevel, StartDate, GoalDate, CalorieGoal) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (name, age, gender, height, starting_weight, goal_weight, activity_level, start_date, goal_time, calorie_goal))
-    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date) VALUES (?,?,?)",
-        (name, calorie_goal, start_date))
+    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, CurrentWeight) VALUES (?,?,?,?)",
+        (name, calorie_goal, start_date, starting_weight))
     connection.commit()
     connection.close()
     print(f"\nGreat {name}! Your profile has successfully been added :)")

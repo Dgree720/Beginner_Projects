@@ -17,6 +17,7 @@ class User:
         self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
+        connection.close()
 
 
 
@@ -28,7 +29,10 @@ class User:
 
 
 
-
+if __name__ == "__main__":
+    name = "Andi"
+    user = User(name)
+    print(user.user_info())
 
 
 

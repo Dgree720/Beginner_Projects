@@ -16,33 +16,33 @@ db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
 
 
-def add_food(name, current_date):
-    row_management.add_new_row_if_necessary()
+def add_food(user, current_date):
+    row_management.add_new_row_if_necessary(user)
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    print("Adding foods under construction")
 
 
-def add_activity():
-    row_management.add_new_row_if_necessary()
+
+
+def add_activity(user):
+    row_management.add_new_row_if_necessary(user)
     print("Activity addition under construction")
 
 
-def show_remaining_cals(name):
+def show_remaining_cals(user):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ?", (name,))
+    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ?", (user.name,))
     remaining_cals = cursor.fetchall()
     connection.close()
     return remaining_cals
 
 
 
-def get_progress(name):
-    user = User(name)
+def get_progress(user):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("SELECT Date, CurrentWeight FROM Tracking WHERE User = ? AND CurrentWeight IS NOT NULL", (name,))
+    cursor.execute("SELECT Date, CurrentWeight FROM Tracking WHERE User = ? AND CurrentWeight IS NOT NULL", (user.name,))
     progress = cursor.fetchall()
     connection.close()
     progress = sorted(progress)
@@ -55,7 +55,6 @@ def get_progress(name):
     with open("user_progress.txt", "w"):
         pass
     with open("user_progress.txt", "a") as file:
-        file.write(f"{user.start_date} {user.weight}\n")
         for x in range(len(progress)):
             try:
                 file.write(f"{progress[x][0]} {str(progress[x][1])}\n")
@@ -72,11 +71,9 @@ def get_progress(name):
     print(f"\n{progress_msg}")
 
 
-
-
 def update_weight_progress(user, current_date):
     # adding row for today's date
-    row_management.add_new_row_if_necessary()
+    row_management.add_new_row_if_necessary(user)
     while True:
         print("Great! Do you want to..."
               "\n1. add a weight for today"
@@ -104,9 +101,10 @@ def update_weight_progress(user, current_date):
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         cursor.execute("UPDATE Tracking SET CurrentWeight = ? WHERE User = ? AND Date = ?",
-                       (new_weight, user, current_date))
+                       (new_weight, user.name, current_date))
         connection.commit()
         connection.close()
+        print(f"\nDone :) Thank you {user.name} for updating your weight!")
     else:
         print("_"*75)
         print("\nokay, for each entry, please enter a valid date and weight. Once you're done"
@@ -116,7 +114,12 @@ def update_weight_progress(user, current_date):
                 while True:
                     try:
                         date = datetime.strptime(input("Date (YYYY-mm-dd): "), "%Y-%m-%d").date()
-                        break
+                        if date < datetime.strptime(user.start_date, "%Y-%m-%d").date():
+                            print("please enter a valid date after you're journey started")
+                        elif date > current_date:
+                            print("can you see the future?! please enter a date in the past")
+                        else:
+                            break
                     except ValueError:
                         print("please enter a valid date")
                         continue
@@ -132,15 +135,20 @@ def update_weight_progress(user, current_date):
                         continue
                 connection = sqlite3.connect(db_path)
                 cursor = connection.cursor()
+                existing_entries = row_management.get_all_lines(user)
+                if date in existing_entries:
+                    cursor.execute("UPDATE Tracking SET CurrentWeight = ? WHERE User = ? AND Date = ?",
+                                   (weight, user.name, date))
+                    connection.commit()
                 cursor.execute("INSERT INTO Tracking (User, Date, CurrentWeight) VALUES (?, ?, ?)",
-                               (user, date, weight))
+                               (user.name, date, weight))
                 connection.commit()
                 connection.close()
                 print("")
                 print("_"*75)
                 print("")
             except EOFError:
-                print(f"\nOkay, {user}! Thanks for updating your progress :) ")
+                print(f"\nOkay, {user.name}! Thanks for updating your progress :) ")
                 break
 
 
@@ -157,8 +165,12 @@ def show_dashboard(user):
 
 
 
-def change_profile():
+def edit_profile():
     print("change profile under construction")
+
+
+def view_profile():
+    pass
 
 
 def delete_user():
