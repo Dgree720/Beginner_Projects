@@ -43,7 +43,8 @@ def check_user(user, reg_users):
                 print("mh, i don't understand. Please type 'yes' or 'no'")
                 continue
     else:
-        print(f"Welcome back {user}")
+        print("_"*75, "\n\n")
+        print(f""*20, f"Welcome back {user}!")
     return True, user
 
 
@@ -134,12 +135,12 @@ def add_user(reg_users):
         except ValueError:
             print("please enter a valid number")
     # Start date (today)
-    start_date = datetime.today()
+    start_date = datetime.today().date()
     # End Date
     while True:
         goal_time = input("\nUntil when do you want to reach your goal? (yyyy-mm-dd): ")
         try:
-            goal_time = datetime.strptime(goal_time, "%Y-%m-%d")
+            goal_time = datetime.strptime(goal_time, "%Y-%m-%d").date()
             break
         except ValueError:
             print("mh the format seems to be wrong, please try again")
@@ -165,7 +166,7 @@ def add_user(reg_users):
     cursor.execute("INSERT INTO Users (Name, Age, Gender, Height, Weight, WeightGoal, ActivityLevel, StartDate, GoalDate, CalorieGoal) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (name, age, gender, height, starting_weight, goal_weight, activity_level, start_date, goal_time, calorie_goal))
     cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date) VALUES (?,?,?)",
-        (name, calorie_goal, start_date.date()))
+        (name, calorie_goal, start_date))
     connection.commit()
     connection.close()
     print(f"\nGreat {name}! Your profile has successfully been added :)")
