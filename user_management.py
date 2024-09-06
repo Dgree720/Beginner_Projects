@@ -195,4 +195,3 @@ def calc_calorie_gaol(age, gender, height, starting_weight, activity_level, weig
     calorie_goal = round(TTDE + daily_deficit)
     return calorie_goal
 
-#test
