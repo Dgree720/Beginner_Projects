@@ -30,29 +30,51 @@ def add_food(user, current_date):
             print("Please enter a valid choice of meal")
     print(f"\nGreat! you can now enter your food you had as a {meal}"
               "\nfor each food that you add, please also enter the amount in grams"
-              "\nonce you're finished press ctrl+z to end adding food to your meal :)\n")
+              "\nonce you're finished enter 'exit' to end adding food to your meal :)\n")
     print("_"*75)
     count = 1
-    while True:
+    food_items,amounts,calories = [],[],[]
+    run_loop = True
+    while run_loop:
         while True:
             food_item = input(f"Food Item {count}: ").strip().lower().title()
-            calories_per_100g = general_functions.get_calorie_info(food_item)
-            if calories_per_100g == "not found":
-                print("mh, sorry could'nt find that in our database")
-                continue
-            else:
+            if food_item == "Exit":
+                run_loop = False
                 break
-        print(f"{food_item} has {calories_per_100g} per 100 grams")
-        while True:
+            else:
+                calories_per_100g = general_functions.get_calorie_info(food_item)
+                if calories_per_100g == "not found":
+                    print("mh, sorry could'nt find that in our database")
+                    continue
+                else:
+                    food_items.append(food_item)
+                    break
+            print(f"{food_item} has {calories_per_100g} per 100 grams")
+        while run_loop:
             try:
                 amount = int(input(f"How much {food_item} do you want to add (in g)?: "))
+                amounts.append(amount)
                 calorie_food = round(calories_per_100g * (amount/100))
+                calories.append(calorie_food)
                 print(f"okay, adding {amount}g of {food_item}. This amounts to {calorie_food}kcal\n")
                 break
             except ValueError:
                 print("please enter a valid amount in grams :)")
                 continue
+        if food_item != "Exit":
+            food_items_dict = {f: [a, c] for f,a,c in zip(food_items,amounts,calories)}
+            total_cals = 0
         count +=1
+    for x in range(len(calories)): total_cals += calories[x]
+    food_items_json = json.dumps(food_items_dict)
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    meal_calories = meal +"Calories"
+    sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ? WHERE User = ? AND Date = ?"
+    params = (food_items_json, total_cals, user.name, current_date.strftime("%Y-%m-%d"))
+    cursor.execute(sql, params)
+    connection.commit()
+    connection.close()
     
 
 
