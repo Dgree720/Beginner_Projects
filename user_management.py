@@ -1,9 +1,10 @@
 import csv
 import sqlite3
 from datetime import datetime
+from text_generation_functions import TextGenerator
 db_path = "CalorieTracker_DB.sqlite"
 
-
+text_generator = TextGenerator(generator_type="motivational_quotes")
 
 # Put all functions as methods into User-Class, once figured out
 def get_reg_users():
@@ -45,6 +46,7 @@ def check_user(name, reg_users):
     else:
         print("_"*75, "\n\n")
         print(f""*20, f"Welcome back {name}!")
+        print(text_generator.gen_motivational_text())
     return True
 
 
