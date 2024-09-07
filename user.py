@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime, date
-db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB.sqlite"
 
 
 class User:

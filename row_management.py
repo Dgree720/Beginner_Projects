@@ -7,8 +7,8 @@ from user_management import request_username
 from user import User
 from general_functions import is_new_day
 
-db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
-
+db_path = "CalorieTracker_DB.sqlite"
+#CalorieTracker_DB.sqlite
 
 def add_new_row_if_necessary(user):
     current_date = date.today()

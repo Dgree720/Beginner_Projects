@@ -1,7 +1,7 @@
 import os
 import sqlite3	
 
-db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB.sqlite"
 
 
 def clear_terminal():
