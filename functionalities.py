@@ -15,8 +15,7 @@ db_path = "CalorieTracker_DB2.sqlite"
 
 
 def add_food(user, current_date):
-    remaining_cals = show_remaining_cals(user, current_date)
-    print(f"\nYou have {remaining_cals} kcal left for today")
+    print(f"\nYou have {user.remaining_calories} kcal left for today")
     print("You can now add Food for your meal of choice")
     while True:
         try:
@@ -70,8 +69,10 @@ def add_food(user, current_date):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     meal_calories = meal +"Calories"
-    sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ? WHERE User = ? AND Date = ?"
-    params = (food_items_json, total_cals, user.name, current_date.strftime("%Y-%m-%d"))
+    total_consumed_cals = user.total_calories_consumed + total_cals
+    remaining_cals = user.calorie_goal - total_consumed_cals 
+    sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ?, TotalCaloriesConsumed = ?, RemainingCalories = ? WHERE User = ? AND Date = ?"
+    params = (food_items_json, total_cals, total_consumed_cals, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
     cursor.execute(sql, params)
     connection.commit()
     connection.close()
