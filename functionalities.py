@@ -1,5 +1,6 @@
 import time
 import sqlite3
+import json
 from rich import print
 from datetime import datetime, date
 from user_management import get_reg_users
@@ -15,7 +16,7 @@ db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
 def add_food(user, current_date):
     remaining_cals = show_remaining_cals(user, current_date)
-    print(f"\nYou have {remaining_cals} left fot today")
+    print(f"\nYou have {remaining_cals} kcal left for today")
     print("You can now add Food for your meal of choice")
     while True:
         try:
@@ -27,10 +28,37 @@ def add_food(user, current_date):
                 continue
         except ValueError:
             print("Please enter a valid choice of meal")
-    while True:
-        print(f"Great! you can now enter your food you had as a {meal}"
+    print(f"\nGreat! you can now enter your food you had as a {meal}"
               "\nfor each food that you add, please also enter the amount in grams"
-              "\nonce you're finished press ctrl+z to end adding food to your meal :)")
+              "\nonce you're finished press ctrl+z to end adding food to your meal :)\n")
+    print("_"*75)
+    count = 1
+    while True:
+        while True:
+            food_item = input(f"Food Item {count}: ").strip().lower().title()
+            calories_per_100g = general_functions.get_calorie_info(food_item)
+            if calories_per_100g == "not found":
+                print("mh, sorry could'nt find that in our database")
+                continue
+            else:
+                break
+        print(f"{food_item} has {calories_per_100g} per 100 grams")
+        while True:
+            try:
+                amount = int(input(f"How much {food_item} do you want to add (in g)?: "))
+                calorie_food = round(calories_per_100g * (amount/100))
+                print(f"okay, adding {amount}g of {food_item}. This amounts to {calorie_food}kcal\n")
+                break
+            except ValueError:
+                print("please enter a valid amount in grams :)")
+                continue
+        count +=1
+    
+
+
+
+        
+        
 
 
         
@@ -49,10 +77,8 @@ def show_remaining_cals(user, current_date):
     row_management.add_new_row_if_necessary(user)
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (user.name, current_date))
-    remaining_cals = cursor.fetchall()
-    if remaining_cals == None:
-        pass
+    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (user.name, str(current_date)))
+    remaining_cals = cursor.fetchall()[0][0]
     connection.close()
     return remaining_cals
 

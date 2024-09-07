@@ -1,12 +1,11 @@
-import pandas as pd
 import time
-import csv
 import sqlite3
 from datetime import datetime, date
 from user_management import get_reg_users
 from user_management import add_user
 from user_management import request_username
 from user import User
+from general_functions import is_new_day
 
 db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
@@ -36,18 +35,11 @@ def get_all_lines(user):
     return sorted_dates
 
 
-def is_new_day(most_recent_row, current_date):
-    if most_recent_row < current_date:
-        return True
-    else:
-        return False
-
-
 def create_new_row(user, current_date):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date) VALUES (?,?,?)",
-                   (user.name, user.calorie_goal, current_date.strftime("%Y-%m-%d")))
+    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, RemainingCalories) VALUES (?,?,?,?)",
+                   (user.name, user.calorie_goal, current_date.strftime("%Y-%m-%d"), user.calorie_goal))
     connection.commit()
     connection.close()
 
