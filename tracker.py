@@ -25,6 +25,7 @@ def main():
 
 
 def menu_options(user, current_date):
+    user = User(user.name, current_date)
     pos_cmds = {
         1: "View Dashboard",
         2: "Add new weight",

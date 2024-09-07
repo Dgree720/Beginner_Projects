@@ -39,6 +39,7 @@ def add_food(user, current_date):
             food_item = input(f"Food Item {count}: ").strip().lower().title()
             if food_item == "Exit":
                 run_loop = False
+                general_functions.clear_terminal()
                 break
             else:
                 calories_per_100g = general_functions.get_calorie_info(food_item)
@@ -62,22 +63,40 @@ def add_food(user, current_date):
                 continue
         if food_item != "Exit":
             food_items_dict = {f: [a, c] for f,a,c in zip(food_items,amounts,calories)}
-            total_cals = 0
         count +=1
+    # defining values for all columns that should be updated
+    total_cals = 0
     for x in range(len(calories)): total_cals += calories[x]
     food_items_json = json.dumps(food_items_dict)
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
+    # pulls current value from meal to account for situation where user overwrites food
+    current_calories_of_meal = current_calories_of_chosen_meal(user, meal)
+    total_cals = total_cals - current_calories_of_meal
     meal_calories = meal +"Calories"
     total_consumed_cals = user.total_calories_consumed + total_cals
     remaining_cals = user.calorie_goal - total_consumed_cals 
+    # running update
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
     sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ?, TotalCaloriesConsumed = ?, RemainingCalories = ? WHERE User = ? AND Date = ?"
     params = (food_items_json, total_cals, total_consumed_cals, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
     cursor.execute(sql, params)
     connection.commit()
     connection.close()
+    print(f"\nGreat, {user.name}! Your food items for {meal} has been added :)")
+    print(f"Your remaining calories for today are {remaining_cals} kcal.")
+
     
 
+def current_calories_of_chosen_meal(user, meal):
+    if meal == "Breakfast":
+        current_calories_of_meal = user.breakfast_cals
+    elif meal == "Lunch":
+        current_calories_of_meal = user.lunch_cals
+    elif meal == "Dinner":
+        current_calories_of_meal = user.dinner_cals
+    elif meal == "Snack":
+        current_calories_of_meal = user.snack_cals
+    return current_calories_of_meal
 
 
         
