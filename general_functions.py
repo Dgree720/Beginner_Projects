@@ -1,7 +1,7 @@
 import os
 import sqlite3	
 
-db_path = "CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB2.sqlite"
 
 
 def clear_terminal():

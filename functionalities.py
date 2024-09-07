@@ -10,7 +10,7 @@ from user import User
 import row_management
 import general_functions
 
-db_path = "CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB2.sqlite"
 
 
 

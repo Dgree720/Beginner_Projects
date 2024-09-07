@@ -1,10 +1,10 @@
 import sqlite3
 from datetime import datetime, date
-db_path = "CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB2.sqlite"
 
 
 class User:
-    def __init__(self, name,current_date):
+    def __init__(self, name):
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         self.name = name
@@ -34,7 +34,7 @@ class User:
         return {"Name": self.name, "Age": self.age,
                 "Gender": self.gender, "Height": self.height, "Weight": self.weight, "Weight Goal": self.weight_goal,
                 "Activity Level": self.activity_level, "Start Date": self.start_date, "Goal Date": self.goal_date,
-                "Calorie Goal": self.calorie_goal, #"Remaining Calories": self.remaining_calories}
+                "Calorie Goal": self.calorie_goal}
 
 
 
@@ -42,7 +42,7 @@ class User:
 
 if __name__ == "__main__":
     name = "Andi"
-    user = User(name, "2024-09-07")
+    user = User(name)
     print(user.user_info())
 
 

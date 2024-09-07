@@ -2,7 +2,7 @@ import csv
 import sqlite3
 from datetime import datetime
 from text_generation_functions import TextGenerator
-db_path = "CalorieTracker_DB.sqlite"
+db_path = "CalorieTracker_DB2.sqlite"
 
 text_generator = TextGenerator(generator_type="motivational_quotes")
 
