@@ -60,7 +60,7 @@ def menu_options(user, current_date):
             print(f"\nselected to {pos_cmds[user_cmd]}...\n")
             break
     if user_cmd == 1:
-        functionalities.show_dashboard(user)
+        functionalities.show_dashboard(user, current_date)
         menu_options(user, current_date)
     elif user_cmd == 2:
         functionalities.update_weight_progress(user, current_date)

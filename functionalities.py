@@ -82,7 +82,7 @@ def add_food(user, current_date):
     cursor.execute(sql, params)
     connection.commit()
     connection.close()
-    print(f"\nGreat, {user.name}! Your food items for {meal} has been added :)")
+    print(f"\nGreat, {user.name}! Your food items for {meal} have been added :)")
     print(f"Your remaining calories for today are {remaining_cals} kcal.")
 
     
@@ -99,22 +99,12 @@ def current_calories_of_chosen_meal(user, meal):
     return current_calories_of_meal
 
 
-        
-        
-
-
-        
-
-
-
-
-
+# dont know if adding activity makes sense bc activity level already factored in in calorie calculation
 def add_activity(user):
     row_management.add_new_row_if_necessary(user)
     print("Activity addition under construction")
 
-
-# TODO implement auto update of RamainingCalories in DB
+# obsolete? attribute remaining_cals of Class User could be used instead
 def show_remaining_cals(user, current_date):
     row_management.add_new_row_if_necessary(user)
     connection = sqlite3.connect(db_path)
@@ -123,7 +113,6 @@ def show_remaining_cals(user, current_date):
     remaining_cals = cursor.fetchall()[0][0]
     connection.close()
     return remaining_cals
-
 
 
 def get_progress(user):
@@ -239,16 +228,30 @@ def update_weight_progress(user, current_date):
                 break
 
 
-def show_dashboard(user):
+
+
+
+
+def show_dashboard(user, current_date):
     print("_"*75)
     print(" "* 20 , "[bold blue] Welcome to your Dashboard![/bold blue]")
     print("\n")
-    print("[bold blue] Progress on your weightloss journey so far[/bold blue]")
+    print("[bold blue] Progress on your weightloss journey so far:[/bold blue]")
     get_progress(user)
+    print("\n"*2)
+    print("[bold blue] Your day so far:")
+    total_calories_consumed = calorie_consumption(user, current_date)
+    general_functions.calorie_graph()
+    print(f"{total_calories_consumed} kcal eaten so far...")
 
 
 
-
+def calorie_consumption(user, current_date):
+    total_calories_consumed = user.total_calories_consumed
+    total_calories = user.calorie_goal
+    with open ("calorie_consumption.txt", "w") as file:
+        file.write(f"{current_date} {total_calories_consumed} {total_calories}")
+    return total_calories_consumed
 
 
 

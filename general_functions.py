@@ -9,7 +9,11 @@ def clear_terminal():
 
 
 def weight_progress_chart():
-    os.system("termgraph user_progress.txt --color {green}")
+    os.system("termgraph user_progress.txt --color [green]")
+
+
+def calorie_graph():
+    os.system("termgraph calorie_consumption.txt --color {green,cyan} --stacked")
 
 
 def is_new_day(most_recent_row, current_date):
