@@ -1,4 +1,3 @@
-import pandas as pd
 from datetime import datetime, date
 import csv
 from user_management import get_reg_users
@@ -8,7 +7,6 @@ from user_management import check_user
 from general_functions import clear_terminal
 import functionalities
 from user import User
-
 
 
 

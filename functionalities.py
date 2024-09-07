@@ -1,6 +1,3 @@
-import pandas as pd
-import termgraph
-import seaborn as sns
 import time
 import sqlite3
 from rich import print
@@ -17,9 +14,27 @@ db_path = "C:\\Users\\seide\\OneDrive\\CalorieTracker_DB.sqlite"
 
 
 def add_food(user, current_date):
-    row_management.add_new_row_if_necessary(user)
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
+    remaining_cals = show_remaining_cals(user, current_date)
+    print(f"\nYou have {remaining_cals} left fot today")
+    print("You can now add Food for your meal of choice")
+    while True:
+        try:
+            meal = input("Meal (Breakfast/Lunch/Dinner/Snack): ").strip().lower().title()
+            if meal in ["Breakfast", "Lunch", "Dinner", "Snack"]:
+                break
+            else:
+                print("Please enter a valid choice of meal")
+                continue
+        except ValueError:
+            print("Please enter a valid choice of meal")
+    while True:
+        print(f"Great! you can now enter your food you had as a {meal}"
+              "\nfor each food that you add, please also enter the amount in grams"
+              "\nonce you're finished press ctrl+z to end adding food to your meal :)")
+
+
+        
+
 
 
 
@@ -29,11 +44,15 @@ def add_activity(user):
     print("Activity addition under construction")
 
 
-def show_remaining_cals(user):
+# TODO implement auto update of RamainingCalories in DB
+def show_remaining_cals(user, current_date):
+    row_management.add_new_row_if_necessary(user)
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ?", (user.name,))
+    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (user.name, current_date))
     remaining_cals = cursor.fetchall()
+    if remaining_cals == None:
+        pass
     connection.close()
     return remaining_cals
 
