@@ -18,7 +18,7 @@ def main():
         add_user(reg_users)
         break
     # create instance of User Class
-    user = User(name)
+    user = User(name, current_date)
     user_cmd = menu_options(user, current_date)
 
 

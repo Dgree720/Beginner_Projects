@@ -32,7 +32,7 @@ def check_user(name, reg_users):
     if name not in reg_users:
         while True:
             try:
-                user_cmd = input("Looks like you're not registered yet. Do you want to register? (ys/no): ").strip().lower()
+                user_cmd = input("Looks like you're not registered yet. Do you want to register? (yes/no): ").strip().lower()
             except ValueError:
                 print("mh, i don't understand. Please type 'yes' or 'no'")
             if user_cmd in ["yes", "no"]:

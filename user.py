@@ -4,7 +4,7 @@ db_path = "CalorieTracker_DB2.sqlite"
 
 
 class User:
-    def __init__(self, name):
+    def __init__(self, name, current_date):
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         self.name = name
@@ -17,14 +17,13 @@ class User:
         self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-        """
         self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0]) 
-        self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE Name = ? AND User = ?", (name, current_date)).fetchall()[0][0])
-        self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE Name = ? AND User = ?", (name, current_date)).fetchall()[0][0])
-        self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE Name = ? AND User = ?", (name, current_date)).fetchall()[0][0])
+        self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+        self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+        self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
         self.total_calories_consumed = self.breakfast_cals + self.lunch_cals + self.dinner_cals + self.snack_cals
         self.remaining_calories = self.calorie_goal - self.total_calories_consumed
-        """
+
 
         connection.close()
 
@@ -34,7 +33,8 @@ class User:
         return {"Name": self.name, "Age": self.age,
                 "Gender": self.gender, "Height": self.height, "Weight": self.weight, "Weight Goal": self.weight_goal,
                 "Activity Level": self.activity_level, "Start Date": self.start_date, "Goal Date": self.goal_date,
-                "Calorie Goal": self.calorie_goal}
+                "Calorie Goal": self.calorie_goal, "Breakfast Cals": self.breakfast_cals, "Lunch Cals": self.lunch_cals, "Dinner Cals": self.dinner_cals,
+                "Snack Cals": self.snack_cals, "Total consumed cals": self.total_calories_consumed, "Remaining Cals": self.remaining_calories}
 
 
 
@@ -42,7 +42,8 @@ class User:
 
 if __name__ == "__main__":
     name = "Andi"
-    user = User(name)
+    current_date = date.today()
+    user = User(name, current_date)
     print(user.user_info())
 
 
