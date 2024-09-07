@@ -36,7 +36,6 @@ def menu_options(user, current_date):
         7: "Exit App"
     }
     print("")
-    print("")
     print("_"*75)
     print("What would you like to do?\n")
     print("Menu:"

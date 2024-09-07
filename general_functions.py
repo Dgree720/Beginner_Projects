@@ -13,7 +13,7 @@ def weight_progress_chart():
 
 
 def calorie_graph():
-    os.system("termgraph calorie_consumption.txt --color {green,cyan} --stacked")
+    os.system("termgraph calorie_consumption.txt --color {green,cyan} --stacked --no-values")
 
 
 def is_new_day(most_recent_row, current_date):

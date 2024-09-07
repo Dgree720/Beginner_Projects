@@ -236,22 +236,27 @@ def show_dashboard(user, current_date):
     print("_"*75)
     print(" "* 20 , "[bold blue] Welcome to your Dashboard![/bold blue]")
     print("\n")
-    print("[bold blue] Progress on your weightloss journey so far:[/bold blue]")
+    title1 = "Progress on your weightloss journey so far:"
+    print(f"[bold blue] {title1} [/bold blue]")
+    print("_"*(len(title1)+1))
     get_progress(user)
     print("\n"*2)
-    print("[bold blue] Your day so far:")
-    total_calories_consumed = calorie_consumption(user, current_date)
+    title2 = "Your day so far:"
+    print(f"[bold blue] {title2} [/bold blue]")
+    print("_"*(len(title2)+1))
+    total_calories_consumed, calorie_goal = calorie_consumption(user, current_date)
     general_functions.calorie_graph()
-    print(f"{total_calories_consumed} kcal eaten so far...")
+    print(f"{total_calories_consumed} kcal eaten so far... your target is {calorie_goal} kcal")
 
 
 
 def calorie_consumption(user, current_date):
     total_calories_consumed = user.total_calories_consumed
-    total_calories = user.calorie_goal
+    remaining_calories = user.remaining_calories
+    calorie_goal = user.calorie_goal
     with open ("calorie_consumption.txt", "w") as file:
-        file.write(f"{current_date} {total_calories_consumed} {total_calories}")
-    return total_calories_consumed
+        file.write(f"{current_date} {total_calories_consumed} {remaining_calories}")
+    return total_calories_consumed, calorie_goal
 
 
 
