@@ -78,6 +78,7 @@ def add_food(user, current_date):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ?, TotalCaloriesConsumed = ?, RemainingCalories = ? WHERE User = ? AND Date = ?"
+
     params = (food_items_json, total_cals, total_consumed_cals, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
     cursor.execute(sql, params)
     connection.commit()
@@ -275,41 +276,5 @@ def calorie_consumption(user, current_date):
     with open ("calorie_consumption.txt", "w") as file:
         file.write(f"{current_date} {total_calories_consumed} {remaining_calories}")
     return total_calories_consumed, calorie_goal, too_many_cals
-
-
-
-def edit_profile(user):
-    view_profile(user)
-    while True:
-        user_cmd = input("\nDo you wish to adjust any of your profile information? (yes/no): ")
-        if user_cmd not in ["yes", "no"]:
-            continue
-        else:
-            break
-    if user_cmd == "yes":
-        print(f"Sure thing, {user.name}. Which information would you like to update? Once you're finished, please enter 'exit': ")
-        while True:
-            info_to_update = input("Update of: ").strip().lower().title()
-            if info_to_update == "exit":
-                break
-            if info_to_update not in ['Name', 'Age', 'Gender', 'Height', 'Starting Weight', 'Weight Goal', 'Activity Level', 'Start Date', 'Goal Date', 'Calorie Goal']:
-                print("Please enter a valid profile info to update")
-                continue
-            new_value = input("New value: ")
-    else:
-        pass
-    
-    
-
-
-def view_profile(user):
-    profile = user.user_profile()
-    for metric, value in profile.items():
-        print(f"\n{metric} -> {value}")
-
-
-def delete_user():
-    print("delete profile under construction")
-
 
 

@@ -4,8 +4,10 @@ db_path = "CalorieTracker_DB2.sqlite"
 
 
 class User:
-    def __init__(self, name, current_date):
+    def __init__(self, name):
         self.name = name
+        self.login_date =  date.today()
+        self.login_date_str = date.today().strftime("%Y-%m-%d")
 
     def fetch_db_user_data(self):
         
@@ -21,19 +23,28 @@ class User:
             self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
             self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
             self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            
-            
-            self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0]) 
-            self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-            self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-            self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-            self.total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-            self.remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+
         except IndexError:
             print("Warning, ", self, " failed while trying to fetch user data from the database in function User.fetch_user_data()")
 
         connection.close()
 
+
+    def fetch_db_user_calories(self, date):         
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        try:
+            self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0]) 
+            self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
+            self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
+            self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
+            self.total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
+            self.remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
+
+        except IndexError:
+            print("Warning, ", self, " failed while trying to fetch user data from the database in function User.fetch_user_data()")
+
+        connection.close()
 
     def update_db_tracking_data(self, attribute_name:str,  update_value, date=None):
 
@@ -83,8 +94,6 @@ class User:
         else:
             pass
         
-            
-
 
     def view_profile(self,):
         profile = self.get_user_profile_dict()
@@ -94,7 +103,6 @@ class User:
 
     def delete_user():
         print("delete profile under construction")
-
 
 
     def get_user_profile_dict(self):
@@ -108,8 +116,6 @@ class User:
                 "Start Date": self.start_date, 
                 "Goal Date": self.goal_date,
                 "Calorie Goal": self.calorie_goal}
-
-
 
 
 
