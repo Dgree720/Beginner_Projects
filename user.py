@@ -37,12 +37,17 @@ class User:
 
 
 
-    def user_info(self):
-        return {"Name": self.name, "Age": self.age,
-                "Gender": self.gender, "Height": self.height, "Weight": self.weight, "Weight Goal": self.weight_goal,
-                "Activity Level": self.activity_level, "Start Date": self.start_date, "Goal Date": self.goal_date,
-                "Calorie Goal": self.calorie_goal, "Breakfast Cals": self.breakfast_cals, "Lunch Cals": self.lunch_cals, "Dinner Cals": self.dinner_cals,
-                "Snack Cals": self.snack_cals, "Total consumed cals": self.total_calories_consumed, "Remaining Cals": self.remaining_calories}
+    def user_profile(self):
+        return {"Name": self.name, 
+                "Age": self.age,
+                "Gender": self.gender, 
+                "Height": self.height, 
+                "Starting Weight": self.weight, 
+                "Weight Goal": self.weight_goal,
+                "Activity Level": self.activity_level, 
+                "Start Date": self.start_date, 
+                "Goal Date": self.goal_date,
+                "Calorie Goal": self.calorie_goal}
 
 
 

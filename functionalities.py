@@ -289,9 +289,12 @@ def edit_profile(user):
     if user_cmd == "yes":
         print(f"Sure thing, {user.name}. Which information would you like to update? Once you're finished, please enter 'exit': ")
         while True:
-            info_to_update = input("Update of: ")
+            info_to_update = input("Update of: ").strip().lower().title()
             if info_to_update == "exit":
                 break
+            if info_to_update not in ['Name', 'Age', 'Gender', 'Height', 'Starting Weight', 'Weight Goal', 'Activity Level', 'Start Date', 'Goal Date', 'Calorie Goal']:
+                print("Please enter a valid profile info to update")
+                continue
             new_value = input("New value: ")
     else:
         pass
