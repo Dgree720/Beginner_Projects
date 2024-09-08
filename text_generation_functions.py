@@ -7,7 +7,7 @@ class TextGenerator():
     
     
     def gen_motivational_text(self):
-        with open("motivational_setences.txt","r") as file:
+        with open("motivational_setences.txt","r",encoding="utf-8") as file:
             lines = file.readlines()
             return " " + choice(lines)
 

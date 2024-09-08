@@ -139,6 +139,11 @@ def get_progress(user, current_date):
         file.write(f"{str(user.goal_date)} {str(user.weight_goal)}")
     # checks for dates with missing weigh-ins tracking to remind user to add weigh-in
     most_recent_weight, most_recent_weighin = row_management.get_most_recent_weight(user, current_date)
+    if(most_recent_weight == None or most_recent_weighin==None):
+        print("\nmh, no weight data available yet. Make this dashboard come alive by making some entries using option 2!") #TODO decisioN: eigentlich siehts auch ohne die meldung machbar aus.
+        return #verlasse funktion
+
+
     missing_weigh_ins = (datetime.strptime(most_recent_weighin, '%Y-%m-%d').date() - current_date).days
     most_recent_weighin = datetime.strptime(most_recent_weighin, '%Y-%m-%d').date()
     if missing_weigh_ins < -2:
