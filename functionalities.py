@@ -278,12 +278,31 @@ def calorie_consumption(user, current_date):
 
 
 
-def edit_profile():
-    print("change profile under construction")
+def edit_profile(user):
+    view_profile(user)
+    while True:
+        user_cmd = input("\nDo you wish to adjust any of your profile information? (yes/no): ")
+        if user_cmd not in ["yes", "no"]:
+            continue
+        else:
+            break
+    if user_cmd == "yes":
+        print(f"Sure thing, {user.name}. Which information would you like to update? Once you're finished, please enter 'exit': ")
+        while True:
+            info_to_update = input("Update of: ")
+            if info_to_update == "exit":
+                break
+            new_value = input("New value: ")
+    else:
+        pass
+    
+    
 
 
-def view_profile():
-    pass
+def view_profile(user):
+    profile = user.user_profile()
+    for metric, value in profile.items():
+        print(f"\n{metric} -> {value}")
 
 
 def delete_user():

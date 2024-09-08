@@ -73,7 +73,7 @@ def menu_options(user, current_date):
         functionalities.add_activity(user)
         menu_options(user, current_date)
     elif user_cmd == 5:
-        functionalities.edit_profile()
+        functionalities.edit_profile(user)
         menu_options(user, current_date)
     elif user_cmd == 6:
         functionalities.delete_user()
