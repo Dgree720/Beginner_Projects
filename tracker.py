@@ -5,6 +5,7 @@ from user_management import add_user
 from user_management import request_username
 from user_management import check_user
 from general_functions import clear_terminal
+from row_management import add_new_row_if_necessary
 import functionalities
 from user import User
 
@@ -18,13 +19,15 @@ def main():
         add_user(reg_users)
         break
     # create instance of User Class
-    user = User(name)
+    user = User(name, current_date)
+    add_new_row_if_necessary(user)
     user_cmd = menu_options(user, current_date)
 
 
 
 
 def menu_options(user, current_date):
+    user = User(user.name, current_date)
     pos_cmds = {
         1: "View Dashboard",
         2: "Add new weight",
@@ -34,7 +37,6 @@ def menu_options(user, current_date):
         6: "Delete User Profile",
         7: "Exit App"
     }
-    print("")
     print("")
     print("_"*75)
     print("What would you like to do?\n")
@@ -59,7 +61,7 @@ def menu_options(user, current_date):
             print(f"\nselected to {pos_cmds[user_cmd]}...\n")
             break
     if user_cmd == 1:
-        functionalities.show_dashboard(user)
+        functionalities.show_dashboard(user, current_date)
         menu_options(user, current_date)
     elif user_cmd == 2:
         functionalities.update_weight_progress(user, current_date)

@@ -1,9 +1,12 @@
 import csv
 import sqlite3
+from rich import print
 from datetime import datetime
-db_path = "CalorieTracker_DB.sqlite"
+from text_generation_functions import TextGenerator
+from general_functions import clear_terminal
+db_path = "CalorieTracker_DB2.sqlite"
 
-
+text_generator = TextGenerator(generator_type="motivational_quotes")
 
 # Put all functions as methods into User-Class, once figured out
 def get_reg_users():
@@ -31,7 +34,7 @@ def check_user(name, reg_users):
     if name not in reg_users:
         while True:
             try:
-                user_cmd = input("Looks like you're not registered yet. Do you want to register? (ys/no): ").strip().lower()
+                user_cmd = input("Looks like you're not registered yet. Do you want to register? (yes/no): ").strip().lower()
             except ValueError:
                 print("mh, i don't understand. Please type 'yes' or 'no'")
             if user_cmd in ["yes", "no"]:
@@ -43,8 +46,10 @@ def check_user(name, reg_users):
                 print("mh, i don't understand. Please type 'yes' or 'no'")
                 continue
     else:
+        clear_terminal()
         print("_"*75, "\n\n")
         print(f""*20, f"Welcome back {name}!")
+        print(f"[italic yellow]-{text_generator.gen_motivational_text()}[italic /yellow]")
     return True
 
 
@@ -159,10 +164,11 @@ def add_user(reg_users):
     cursor = connection.cursor()
     cursor.execute("INSERT INTO Users (Name, Age, Gender, Height, Weight, WeightGoal, ActivityLevel, StartDate, GoalDate, CalorieGoal) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (name, age, gender, height, starting_weight, goal_weight, activity_level, start_date, goal_time, calorie_goal))
-    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, CurrentWeight) VALUES (?,?,?,?)",
-        (name, calorie_goal, start_date, starting_weight))
+    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, CurrentWeight, RemainingCalories) VALUES (?,?,?,?,?)",
+        (name, calorie_goal, start_date, starting_weight, calorie_goal))
     connection.commit()
     connection.close()
+    clear_terminal()
     print(f"\nGreat {name}! Your profile has successfully been added :)")
     print("_"*75)
 
