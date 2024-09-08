@@ -5,6 +5,7 @@ from user_management import add_user
 from user_management import request_username
 from user_management import check_user
 from general_functions import clear_terminal
+from row_management import add_new_row_if_necessary
 import functionalities
 from user import User
 
@@ -19,6 +20,7 @@ def main():
         break
     # create instance of User Class
     user = User(name, current_date)
+    add_new_row_if_necessary(user)
     user_cmd = menu_options(user, current_date)
 
 

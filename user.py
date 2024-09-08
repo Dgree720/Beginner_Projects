@@ -17,12 +17,20 @@ class User:
         self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
         self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-        self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0]) 
-        self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-        self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-        self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-        self.total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
-        self.remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+        try:
+            self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0]) 
+            self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+            self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+            self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+            self.total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+            self.remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (name, current_date)).fetchall()[0][0])
+        except IndexError:
+            self.breakfast_cals = 0
+            self.lunch_cals = 0
+            self.dinner_cals = 0
+            self.snack_cals = 0
+            self.total_calories_consumed = 0
+            self.remaining_calories = 0
 
 
         connection.close()
