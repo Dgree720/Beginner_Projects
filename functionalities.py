@@ -140,8 +140,10 @@ def get_progress(user, current_date):
     # checks for dates with missing weigh-ins tracking to remind user to add weigh-in
     most_recent_weight, most_recent_weighin = row_management.get_most_recent_weight(user, current_date)
     missing_weigh_ins = (datetime.strptime(most_recent_weighin, '%Y-%m-%d').date() - current_date).days
+    most_recent_weighin = datetime.strptime(most_recent_weighin, '%Y-%m-%d').date()
     if missing_weigh_ins < -2:
-        weigh_in_warning = "\nmh, it looks like you have'nt tracked your weight for some days. Seeing your weight progress can be motivating. Go to the add weight page to update your progress :)"
+        weigh_in_warning = f"\nmh, it looks like you haven't tracked your weight for some days between {most_recent_weighin} and today. " \
+                   "\nSeeing your weight progress can be motivating. Go to the add weight page to update your progress :)"
     else:
         weigh_in_warning = ""
     if weight_progress < 0:
