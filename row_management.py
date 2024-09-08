@@ -23,6 +23,19 @@ def get_most_recent_row(sorted_dates):
     return most_recent_row
 
 
+def get_most_recent_weight(user, current_date):
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT Date, CurrentWeight FROM Tracking WHERE User = ? AND CurrentWeight != ? AND Date != ?", (user.name, 0, current_date))
+    weigh_ins = cursor.fetchall()
+    most_recent_weight = sorted(weigh_ins)[0][1]
+    most_recent_weighin = sorted(weigh_ins)[0][0]
+    connection.close()
+    return most_recent_weight, most_recent_weighin
+
+
+
+
 def get_all_lines(user):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
@@ -36,17 +49,18 @@ def get_all_lines(user):
 
 
 def create_new_row(user, current_date):
+    most_recent_weight, most_recent_weighin = get_most_recent_weight(user, current_date)
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, RemainingCalories) VALUES (?,?,?,?)",
-                   (user.name, user.calorie_goal, current_date.strftime("%Y-%m-%d"), user.calorie_goal))
+    cursor.execute("INSERT INTO Tracking (User, DailyCalorieGoal, Date, RemainingCalories, CurrentWeight) VALUES (?,?,?,?,?)",
+                   (user.name, user.calorie_goal, current_date.strftime("%Y-%m-%d"), user.calorie_goal, most_recent_weight))
     connection.commit()
     connection.close()
 
 
 
-
 if __name__ == "__main__":
-    add_new_row_if_necessary("Andi")
-
+    current_date = date.today()
+    user = User("Andi", current_date)
+    print(get_most_recent_weight(user))
 
