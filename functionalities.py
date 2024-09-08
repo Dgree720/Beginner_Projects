@@ -239,6 +239,7 @@ def update_weight_progress(user, current_date):
                 print("_"*75)
                 print("")
             except EOFError:
+                general_functions.clear_terminal()
                 print(f"\nOkay, {user.name}! Thanks for updating your progress :) ")
                 break
 
@@ -257,8 +258,8 @@ def show_dashboard(user, current_date):
     title2 = "Your day so far:"
     print(f"[bold blue] {title2} [/bold blue]")
     print("_"*(len(title2)+1))
-    total_calories_consumed, calorie_goal = calorie_consumption(user, current_date)
-    general_functions.calorie_graph()
+    total_calories_consumed, calorie_goal, too_many_cals = calorie_consumption(user, current_date)
+    general_functions.calorie_graph(too_many_cals)
     print(f"{total_calories_consumed} kcal eaten so far... your target is {calorie_goal} kcal")
 
 
@@ -267,9 +268,13 @@ def calorie_consumption(user, current_date):
     total_calories_consumed = user.total_calories_consumed
     remaining_calories = user.remaining_calories
     calorie_goal = user.calorie_goal
+    if remaining_calories < 0:
+        too_many_cals = True
+    else:
+        too_many_cals = False
     with open ("calorie_consumption.txt", "w") as file:
         file.write(f"{current_date} {total_calories_consumed} {remaining_calories}")
-    return total_calories_consumed, calorie_goal
+    return total_calories_consumed, calorie_goal, too_many_cals
 
 
 
