@@ -15,7 +15,7 @@ db_path = "CalorieTracker_DB2.sqlite"
 
 
 def add_food(user, current_date):
-    print(f"\nYou have {user.remaining_calories} kcal left for today")
+    print(f"\nYou have {user.calories.today_calories["remaining_calories"]} kcal left for today")
     print("You can now add Food for your meal of choice")
     while True:
         try:
@@ -33,6 +33,7 @@ def add_food(user, current_date):
     print("_"*75)
     count = 1
     food_items,amounts,calories = [],[],[]
+    food_items_dict = {}
     run_loop = True
     while run_loop:
         while True:
@@ -63,22 +64,25 @@ def add_food(user, current_date):
                 continue
         if food_item != "Exit":
             food_items_dict = {f: [a, c] for f,a,c in zip(food_items,amounts,calories)}
+            
         count +=1
     # defining values for all columns that should be updated
     total_cals = 0
     for x in range(len(calories)): total_cals += calories[x]
-    food_items_json = json.dumps(food_items_dict)
+   
     # pulls current value from meal to account for situation where user overwrites food
     current_calories_of_meal = current_calories_of_chosen_meal(user, meal)
     total_cals = total_cals - current_calories_of_meal
     meal_calories = meal +"Calories"
-    total_consumed_cals = user.total_calories_consumed + total_cals
+    total_consumed_cals = user.calories.today_calories["total_calories_consumed"] + total_cals
     remaining_cals = user.calorie_goal - total_consumed_cals 
     # running update
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     sql = f"UPDATE Tracking SET {meal} = ?, {meal_calories} = ?, TotalCaloriesConsumed = ?, RemainingCalories = ? WHERE User = ? AND Date = ?"
-
+    
+    food_items_json = json.dumps(food_items_dict)
+    
     params = (food_items_json, total_cals, total_consumed_cals, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
     cursor.execute(sql, params)
     connection.commit()
@@ -88,15 +92,16 @@ def add_food(user, current_date):
 
     
 
-def current_calories_of_chosen_meal(user, meal):
+
+def current_calories_of_chosen_meal(user:User, meal):
     if meal == "Breakfast":
-        current_calories_of_meal = user.breakfast_cals
+        current_calories_of_meal = user.calories.today_calories["breakfast_cals"]
     elif meal == "Lunch":
-        current_calories_of_meal = user.lunch_cals
+        current_calories_of_meal = user.calories.today_calories["lunch_cals"]
     elif meal == "Dinner":
-        current_calories_of_meal = user.dinner_cals
+        current_calories_of_meal = user.calories.today_calories["dinner_cals"]
     elif meal == "Snack":
-        current_calories_of_meal = user.snack_cals
+        current_calories_of_meal = user.calories.today_calories["snack_cals"]
     return current_calories_of_meal
 
 
@@ -140,27 +145,26 @@ def get_progress(user, current_date):
         file.write(f"{str(user.goal_date)} {str(user.weight_goal)}")
     # checks for dates with missing weigh-ins tracking to remind user to add weigh-in
     most_recent_weight, most_recent_weighin = row_management.get_most_recent_weight(user, current_date)
-    if(most_recent_weight == None or most_recent_weighin==None):
-        print("\nmh, no weight data available yet. Make this dashboard come alive by making some entries using option 2!") #TODO decisioN: eigentlich siehts auch ohne die meldung machbar aus.
-        return #verlasse funktion
 
-
-    missing_weigh_ins = (datetime.strptime(most_recent_weighin, '%Y-%m-%d').date() - current_date).days
-    most_recent_weighin = datetime.strptime(most_recent_weighin, '%Y-%m-%d').date()
-    if missing_weigh_ins < -2:
-        weigh_in_warning = f"\nmh, it looks like you haven't tracked your weight for some days between {most_recent_weighin} and today. " \
-                   "\nSeeing your weight progress can be motivating. Go to the add weight page to update your progress :)"
+    if(most_recent_weight and most_recent_weighin):
+        missing_weigh_ins = (datetime.strptime(most_recent_weighin, '%Y-%m-%d').date() - current_date).days
+        most_recent_weighin = datetime.strptime(most_recent_weighin, '%Y-%m-%d').date()
+        if missing_weigh_ins < -2:
+            weigh_in_warning = f"\nmh, it looks like you haven't tracked your weight for some days between {most_recent_weighin} and today. " \
+                    "\nSeeing your weight progress can be motivating. Go to the add weight page to update your progress :)"
+        else:
+            weigh_in_warning = ""
+        if weight_progress < 0:
+            progress_msg = f"Congrats! You lost {abs(weight_progress)} kg so far! Only {abs(weight_to_go)} kg to go :)"
+        elif weight_progress > 0:
+            progress_msg = f"You gained {abs(weight_progress)} kg. No big deal, you'll get back on track! {abs(weight_to_go)} kg to go :"
+        else:
+            progress_msg = f"you maintained your weight... carry on. {abs(weight_to_go)} kg to go :)"
+    
     else:
-        weigh_in_warning = ""
-    if weight_progress < 0:
-        progress_msg = f"Congrats! You lost {abs(weight_progress)} kg so far! Only {abs(weight_to_go)} kg to go :)"
-    elif weight_progress > 0:
-        progress_msg = f"You gained {abs(weight_progress)} kg. No big deal, you'll get back on track! {abs(weight_to_go)} kg to go :"
-    else:
-        progress_msg = f"you maintained your weight... carry on. {abs(weight_to_go)} kg to go :)"
-    general_functions.weight_progress_chart()
-    print(f"\n{progress_msg}")
-    print(weigh_in_warning)
+        return "", ""
+    
+    return weigh_in_warning, progress_msg
 
 
 def update_weight_progress(user, current_date):
@@ -228,12 +232,14 @@ def update_weight_progress(user, current_date):
                 connection = sqlite3.connect(db_path)
                 cursor = connection.cursor()
                 existing_entries = row_management.get_all_lines(user)
-                if date in existing_entries:
+                if str(date) in existing_entries: #existing_entries = ["2024-09-08"]
                     cursor.execute("UPDATE Tracking SET CurrentWeight = ? WHERE User = ? AND Date = ?",
                                    (weight, user.name, date))
                     connection.commit()
-                cursor.execute("INSERT INTO Tracking (User, Date, CurrentWeight) VALUES (?, ?, ?)",
-                               (user.name, date, weight))
+                else:
+
+                    cursor.execute("INSERT INTO Tracking (User, Date, CurrentWeight) VALUES (?, ?, ?)",
+                            (user.name, date, weight))
                 connection.commit()
                 connection.close()
                 print("")
@@ -254,8 +260,14 @@ def show_dashboard(user, current_date):
     title1 = "Progress on your weightloss journey so far:"
     print(f"[bold blue] {title1} [/bold blue]")
     print("_"*(len(title1)+1))
-    get_progress(user, current_date)
-    print("\n"*2)
+    weigh_in_warning, progress_msg = get_progress(user, current_date)
+    general_functions.weight_progress_chart()
+    
+    if(len(weigh_in_warning)+len(progress_msg) > 0):
+        print("\n",progress_msg)
+        print("\n",weigh_in_warning)
+        print("\n"*2)
+
     title2 = "Your day so far:"
     print(f"[bold blue] {title2} [/bold blue]")
     print("_"*(len(title2)+1))
@@ -265,9 +277,10 @@ def show_dashboard(user, current_date):
 
 
 
+
 def calorie_consumption(user, current_date):
-    total_calories_consumed = user.total_calories_consumed
-    remaining_calories = user.remaining_calories
+    total_calories_consumed = user.calories.today_calories["total_calories_consumed"]
+    remaining_calories = user.calories.today_calories["remaining_calories"]
     calorie_goal = user.calorie_goal
     if remaining_calories < 0:
         too_many_cals = True

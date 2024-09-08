@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime, date
 db_path = "CalorieTracker_DB2.sqlite"
+from row_management import add_new_row_if_necessary
 
 
 class User:
@@ -8,43 +9,32 @@ class User:
         self.name = name
         self.login_date =  date.today()
         self.login_date_str = date.today().strftime("%Y-%m-%d")
+        self.calories = UserCalories(user_belonging_to=self)
+        
+    def on_login(self):
+        add_new_row_if_necessary(user=self) #creates new tracking record if necessary
+        self.fetch_db_user_data()
 
     def fetch_db_user_data(self):
         
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         try:
-            self.age = int(cursor.execute("SELECT Age FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            self.gender = cursor.execute("SELECT Gender FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
-            self.height = int(cursor.execute("SELECT Height FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            self.weight = int(cursor.execute("SELECT Weight FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            self.weight_goal = int(cursor.execute("SELECT WeightGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            self.activity_level = int(cursor.execute("SELECT ActivityLevel FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
-            self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
-            self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (name,)).fetchall()[0][0]
-            self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (name,)).fetchall()[0][0])
+            self.age = int(cursor.execute("SELECT Age FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
+            self.gender = cursor.execute("SELECT Gender FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0]
+            self.height = int(cursor.execute("SELECT Height FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
+            self.weight = int(cursor.execute("SELECT Weight FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
+            self.weight_goal = int(cursor.execute("SELECT WeightGoal FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
+            self.activity_level = int(cursor.execute("SELECT ActivityLevel FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
+            self.start_date = cursor.execute("SELECT StartDate FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0]
+            self.goal_date = cursor.execute("SELECT GoalDate FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0]
+            self.calorie_goal = int(cursor.execute("SELECT CalorieGoal FROM Users WHERE Name = ?", (self.name,)).fetchall()[0][0])
 
         except IndexError:
             print("Warning, ", self, " failed while trying to fetch user data from the database in function User.fetch_user_data()")
 
         connection.close()
-
-
-    def fetch_db_user_calories(self, date):         
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
-        try:
-            self.breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0]) 
-            self.lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
-            self.dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
-            self.snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
-            self.total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
-            self.remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (name, date)).fetchall()[0][0])
-
-        except IndexError:
-            print("Warning, ", self, " failed while trying to fetch user data from the database in function User.fetch_user_data()")
-
-        connection.close()
+    
 
     def update_db_tracking_data(self, attribute_name:str,  update_value, date=None):
 
@@ -130,3 +120,36 @@ if __name__ == "__main__":
 
 
 
+class UserCalories:
+    def __init__(self, user_belonging_to):
+        self.today_date = date.today().strftime("%Y-%m-%d")
+        self.user = user_belonging_to
+        
+        
+        self.today_calories = self.get_db_user_calories(self.today_date) #IMPORTANT: NOT before self.user is assigned
+
+
+
+    def get_db_user_calories(self, date):         
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        try:
+            breakfast_cals = int(cursor.execute("SELECT BreakfastCalories FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0]) 
+            lunch_cals = int(cursor.execute("SELECT LunchCalories FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0])
+            dinner_cals = int(cursor.execute("SELECT DinnerCalories FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0])
+            snack_cals = int(cursor.execute("SELECT SnackCalories FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0])
+            total_calories_consumed = int(cursor.execute("SELECT TotalCaloriesConsumed FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0])
+            remaining_calories = int(cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (self.user.name, date)).fetchall()[0][0])
+            connection.close()
+            return {
+                "breakfast_cals": breakfast_cals,
+                "lunch_cals": lunch_cals,
+                "dinner_cals": dinner_cals,
+                "snack_cals": snack_cals,
+                "total_calories_consumed": total_calories_consumed,
+                "remaining_calories": remaining_calories,
+            } 
+
+        except IndexError:
+            connection.close()
+            return None

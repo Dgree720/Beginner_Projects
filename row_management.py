@@ -4,7 +4,6 @@ from datetime import datetime, date
 from user_management import get_reg_users
 from user_management import add_user
 from user_management import request_username
-from user import User
 from general_functions import is_new_day
 
 db_path = "CalorieTracker_DB2.sqlite"
@@ -16,9 +15,8 @@ def add_new_row_if_necessary(user):
     if is_new_day(get_most_recent_row(sorted_dates), current_date):
         create_new_row(user, current_date)
 
-
-
 def get_most_recent_row(sorted_dates):
+    if(sorted)
     most_recent_row = datetime.strptime(sorted_dates[0], "%Y-%m-%d").date()
     return most_recent_row
 
