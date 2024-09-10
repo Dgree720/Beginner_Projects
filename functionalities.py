@@ -74,7 +74,7 @@ def add_food(user, current_date):
     # current_calories_of_meal = current_calories_of_chosen_meal(user, meal)
     # total_cals = total_cals - current_calories_of_meal
     meal_calories = meal +"Calories"
-    new_total_calories = current_calories_wo_meal(user, meal) + meal_total_cals
+    new_total_calories = get_total_calories_wo_current_meal(user, meal) + meal_total_cals
     remaining_cals = user.calorie_goal - new_total_calories 
     # running update
     connection = sqlite3.connect(db_path)
@@ -90,13 +90,11 @@ def add_food(user, current_date):
     print(f"\nGreat, {user.name}! Your food items for {meal} have been added :)")
     print(f"Your remaining calories for today are {remaining_cals} kcal.")
 
-    
 
-
-def current_calories_wo_meal(user:User, meal):
-    current_calories_without_meal = (user.calories.today_calories["breakfast_cals"] + user.calories.today_calories["lunch_cals"] 
+def get_total_calories_wo_current_meal(user:User, meal):
+    total_calories_wo_current_meal = (user.calories.today_calories["breakfast_cals"] + user.calories.today_calories["lunch_cals"] 
     + user.calories.today_calories["dinner_cals"] + user.calories.today_calories["snack_cals"]) - user.calories.today_calories[meal.lower() + "_cals"]
-    return current_calories_without_meal
+    return total_calories_wo_current_meal
 
 
 # dont know if adding activity makes sense bc activity level already factored in in calorie calculation
