@@ -150,7 +150,7 @@ def get_progress(user, current_date):
         missing_weigh_ins = (datetime.strptime(most_recent_weighin, '%Y-%m-%d').date() - current_date).days
         most_recent_weighin = datetime.strptime(most_recent_weighin, '%Y-%m-%d').date()
         if missing_weigh_ins < -2:
-            weigh_in_warning = f"\nmh, it looks like you haven't tracked your weight for some days between {most_recent_weighin} and today. " \
+            weigh_in_warning = f"\nmh, it looks like you haven't tracked your weight for {abs(missing_weigh_ins)} days between {most_recent_weighin} and today. " \
                     "\nSeeing your weight progress can be motivating. Go to the add weight page to update your progress :)"
         else:
             weigh_in_warning = ""
@@ -263,7 +263,7 @@ def show_dashboard(user, current_date):
     weigh_in_warning, progress_msg = get_progress(user, current_date)
     general_functions.weight_progress_chart()
     
-    if(len(weigh_in_warning)+len(progress_msg) > 0):
+    if weigh_in_warning != "":
         print("\n",progress_msg)
         print("\n",weigh_in_warning)
         print("\n"*2)

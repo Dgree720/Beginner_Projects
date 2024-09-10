@@ -30,8 +30,8 @@ def get_most_recent_weight(user, current_date) -> tuple:
     weigh_ins = cursor.fetchall()
 
     if(len(weigh_ins)>0): # weigh_ins kann eine leere liste sein (vermeidet index out of bounds in folgezeile)
-        most_recent_weight = sorted(weigh_ins)[0][1]
-        most_recent_weighin = sorted(weigh_ins)[0][0]
+        most_recent_weight = sorted(weigh_ins, reverse= True)[0][1]
+        most_recent_weighin = sorted(weigh_ins, reverse = True)[0][0]
         connection.close()
         return most_recent_weight, most_recent_weighin
     else:
@@ -66,5 +66,5 @@ def create_new_row(user, current_date):
 if __name__ == "__main__":
     current_date = date.today()
     user = User("Andi", current_date)
-    print(get_most_recent_weight(user))
+    print(get_most_recent_weight(user, current_date))
 
