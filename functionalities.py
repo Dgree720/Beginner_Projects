@@ -6,7 +6,7 @@ from datetime import datetime, date
 from user_management import get_reg_users
 from user_management import add_user
 from user_management import request_username
-from user import User
+from user import User, UserCalories
 import row_management
 import general_functions
 
@@ -67,15 +67,15 @@ def add_food(user, current_date):
             
         count +=1
     # defining values for all columns that should be updated
-    total_cals = 0
-    for x in range(len(calories)): total_cals += calories[x]
+    meal_total_cals = 0
+    for x in range(len(calories)): meal_total_cals += calories[x]
    
     # pulls current value from meal to account for situation where user overwrites food
-    current_calories_of_meal = current_calories_of_chosen_meal(user, meal)
-    total_cals = total_cals - current_calories_of_meal
+    # current_calories_of_meal = current_calories_of_chosen_meal(user, meal)
+    # total_cals = total_cals - current_calories_of_meal
     meal_calories = meal +"Calories"
-    total_consumed_cals = user.calories.today_calories["total_calories_consumed"] + total_cals
-    remaining_cals = user.calorie_goal - total_consumed_cals 
+    new_total_calories = current_calories_wo_meal(user, meal) + meal_total_cals
+    remaining_cals = user.calorie_goal - new_total_calories 
     # running update
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
@@ -83,7 +83,7 @@ def add_food(user, current_date):
     
     food_items_json = json.dumps(food_items_dict)
     
-    params = (food_items_json, total_cals, total_consumed_cals, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
+    params = (food_items_json, meal_total_cals, new_total_calories, remaining_cals, user.name, current_date.strftime("%Y-%m-%d"))
     cursor.execute(sql, params)
     connection.commit()
     connection.close()
@@ -93,16 +93,10 @@ def add_food(user, current_date):
     
 
 
-def current_calories_of_chosen_meal(user:User, meal):
-    if meal == "Breakfast":
-        current_calories_of_meal = user.calories.today_calories["breakfast_cals"]
-    elif meal == "Lunch":
-        current_calories_of_meal = user.calories.today_calories["lunch_cals"]
-    elif meal == "Dinner":
-        current_calories_of_meal = user.calories.today_calories["dinner_cals"]
-    elif meal == "Snack":
-        current_calories_of_meal = user.calories.today_calories["snack_cals"]
-    return current_calories_of_meal
+def current_calories_wo_meal(user:User, meal):
+    current_calories_without_meal = (user.calories.today_calories["breakfast_cals"] + user.calories.today_calories["lunch_cals"] 
+    + user.calories.today_calories["dinner_cals"] + user.calories.today_calories["snack_cals"]) - user.calories.today_calories[meal.lower() + "_cals"]
+    return current_calories_without_meal
 
 
 # dont know if adding activity makes sense bc activity level already factored in in calorie calculation

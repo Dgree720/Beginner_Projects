@@ -122,12 +122,13 @@ if __name__ == "__main__":
 
 class UserCalories:
     def __init__(self, user_belonging_to):
-        self.today_date = date.today().strftime("%Y-%m-%d")
+        self.today_date = date.today()
         self.user = user_belonging_to
         
         
-        self.today_calories = self.get_db_user_calories(self.today_date) #IMPORTANT: NOT before self.user is assigned
-
+    @property
+    def today_calories(self):
+        return self.get_db_user_calories(self.today_date)
 
 
     def get_db_user_calories(self, date):         
