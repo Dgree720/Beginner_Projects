@@ -16,8 +16,10 @@ def add_new_row_if_necessary(user):
         create_new_row(user, current_date)
 
 def get_most_recent_row(sorted_dates):
-    if(sorted)
-    most_recent_row = datetime.strptime(sorted_dates[0], "%Y-%m-%d").date()
+    if len(sorted_dates) > 0:
+        most_recent_row = datetime.strptime(sorted_dates[0], "%Y-%m-%d").date()
+    else:
+        pass
     return most_recent_row
 
 

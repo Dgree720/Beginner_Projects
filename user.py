@@ -12,8 +12,8 @@ class User:
         self.calories = UserCalories(user_belonging_to=self)
         
     def on_login(self):
+        self.fetch_db_user_data() # has to be called before add_new_row_if_necessary. Otherwise User attributes are'nt retrieved which are used in add_new_row_if_necessary -> Error
         add_new_row_if_necessary(user=self) #creates new tracking record if necessary
-        self.fetch_db_user_data()
 
     def fetch_db_user_data(self):
         
