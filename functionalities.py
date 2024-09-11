@@ -235,8 +235,6 @@ def update_weight_progress(user, current_date):
                 break
 
 
-
-
 def show_dashboard(user, current_date):
     print("_"*75)
     print(" "* 20 , "[bold blue] Welcome to your Dashboard![/bold blue]")
@@ -247,8 +245,8 @@ def show_dashboard(user, current_date):
     weigh_in_warning, progress_msg = get_progress(user, current_date)
     display_function.weight_progress_chart()
     
+    print(f"\n {progress_msg} \n")
     if weigh_in_warning != "":
-        print("\n",progress_msg)
         print("\n",weigh_in_warning)
         print("\n"*2)
 

@@ -30,14 +30,14 @@ def get_most_recent_weight(user, current_date) -> tuple:
     cursor.execute(f"SELECT Date, CurrentWeight FROM Tracking WHERE User = ? AND CurrentWeight != ? AND Date != ?", (user.name, 0, current_date))
     weigh_ins = cursor.fetchall()
 
-    if(len(weigh_ins)>0): # weigh_ins kann eine leere liste sein (vermeidet index out of bounds in folgezeile)
+    if(len(weigh_ins)>0): # weigh_ins can be empty list (avoids index out of bounds in following line)
         most_recent_weight = sorted(weigh_ins, reverse= True)[0][1]
         most_recent_weighin = sorted(weigh_ins, reverse = True)[0][0]
         connection.close()
         return most_recent_weight, most_recent_weighin
     else:
         #print("weigh_ins is ", weigh_ins, " returning None") # just for debugging
-        return (None,None) #weil es einen tupel returnen muss
+        return (None,None) #has to return tuple
 
 
 
