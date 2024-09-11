@@ -261,15 +261,17 @@ def show_dashboard(user, current_date):
 
 
 def calorie_consumption(user, current_date):
+    calorie_goal = user.calorie_goal
     total_calories_consumed = user.calories.today_calories["total_calories_consumed"]
     remaining_calories = user.calories.today_calories["remaining_calories"]
-    calorie_goal = user.calorie_goal
+    total_calories_consumed_normalized = round((total_calories_consumed/calorie_goal)*100)
+    remaining_calories_normalized = round((remaining_calories/calorie_goal)*100)
     if remaining_calories < 0:
         too_many_cals = True
     else:
         too_many_cals = False
     with open ("calorie_consumption.txt", "w") as file:
-        file.write(f"{current_date} {total_calories_consumed} {remaining_calories}")
+        file.write(f"{current_date} {total_calories_consumed_normalized} {remaining_calories_normalized}")
     return total_calories_consumed, calorie_goal, too_many_cals
 
 

@@ -14,6 +14,6 @@ class DisplayFunctions:
 
     def calorie_graph(self, too_many_cals):
         if too_many_cals:
-            os.system("termgraph calorie_consumption.txt --color {red,cyan} --stacked --no-values")
+            os.system("termgraph calorie_consumption.txt --color {red,cyan} --stacked --width 30")
         else:
-            os.system("termgraph calorie_consumption.txt --color {green,cyan} --stacked --no-values")
+            os.system("termgraph calorie_consumption.txt --color {green,cyan} --stacked --width 30")
