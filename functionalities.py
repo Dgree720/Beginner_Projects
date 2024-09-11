@@ -104,16 +104,6 @@ def add_activity(user):
     row_management.add_new_row_if_necessary(user)
     print("Activity addition under construction")
 
-# obsolete? attribute remaining_cals of Class User could be used instead
-def show_remaining_cals(user, current_date):
-    row_management.add_new_row_if_necessary(user)
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
-    cursor.execute("SELECT RemainingCalories FROM Tracking WHERE User = ? AND Date = ?", (user.name, str(current_date)))
-    remaining_cals = cursor.fetchall()[0][0]
-    connection.close()
-    return remaining_cals
-
 
 def get_progress(user, current_date):
     connection = sqlite3.connect(db_path)
