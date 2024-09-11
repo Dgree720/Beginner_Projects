@@ -7,8 +7,10 @@ from user_management import get_reg_users
 from user_management import add_user
 from user_management import request_username
 from user import User, UserCalories
+from display_functions import DisplayFunctions
 import row_management
-import general_functions
+display_function = DisplayFunctions()
+
 
 db_path = "CalorieTracker_DB2.sqlite"
 
@@ -40,10 +42,10 @@ def add_food(user, current_date):
             food_item = input(f"Food Item {count}: ").strip().lower().title()
             if food_item == "Exit":
                 run_loop = False
-                general_functions.clear_terminal()
+                display_function.clear_terminal()
                 break
             else:
-                calories_per_100g = general_functions.get_calorie_info(food_item)
+                calories_per_100g = get_calorie_info(food_item)
                 if calories_per_100g == "not found":
                     print("mh, sorry could'nt find that in our database")
                     continue
@@ -238,7 +240,7 @@ def update_weight_progress(user, current_date):
                 print("_"*75)
                 print("")
             except EOFError:
-                general_functions.clear_terminal()
+                display_function.clear_terminal()
                 print(f"\nOkay, {user.name}! Thanks for updating your progress :) ")
                 break
 
@@ -253,7 +255,7 @@ def show_dashboard(user, current_date):
     print(f"[bold blue] {title1} [/bold blue]")
     print("_"*(len(title1)+1))
     weigh_in_warning, progress_msg = get_progress(user, current_date)
-    general_functions.weight_progress_chart()
+    display_function.weight_progress_chart()
     
     if weigh_in_warning != "":
         print("\n",progress_msg)
@@ -264,7 +266,7 @@ def show_dashboard(user, current_date):
     print(f"[bold blue] {title2} [/bold blue]")
     print("_"*(len(title2)+1))
     total_calories_consumed, calorie_goal, too_many_cals = calorie_consumption(user, current_date)
-    general_functions.calorie_graph(too_many_cals)
+    display_function.calorie_graph(too_many_cals)
     print(f"{total_calories_consumed} kcal eaten so far... your target is {calorie_goal} kcal")
 
 
@@ -283,3 +285,13 @@ def calorie_consumption(user, current_date):
     return total_calories_consumed, calorie_goal, too_many_cals
 
 
+def get_calorie_info(food_item):
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    try:
+        cursor.execute(f"SELECT Cals_per100grams FROM CalorieDB  WHERE FoodItem = ?", (food_item,))
+        calorie_info = int(cursor.fetchall()[0][0].split(" ")[0])
+    except:
+        calorie_info = "not found"
+    connection.close()
+    return calorie_info

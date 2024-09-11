@@ -8,6 +8,7 @@ from user import User
 from display import Display
 
 
+
 def main():
     display = Display()
     current_date = date.today()

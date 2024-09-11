@@ -3,8 +3,9 @@ import sqlite3
 from rich import print
 from datetime import datetime
 from text_generation_functions import TextGenerator
-from general_functions import clear_terminal
+from display_functions import DisplayFunctions
 db_path = "CalorieTracker_DB2.sqlite"
+display_function = DisplayFunctions()
 
 text_generator = TextGenerator(generator_type="motivational_quotes")
 
@@ -46,7 +47,7 @@ def check_user(name, reg_users):
                 print("mh, i don't understand. Please type 'yes' or 'no'")
                 continue
     else:
-        clear_terminal()
+        display_function.clear_terminal()
         print("_"*75, "\n\n")
         print(f""*20, f"Welcome back {name}!")
         print(f"[italic yellow]-{text_generator.gen_motivational_text()}[italic /yellow]")
@@ -168,7 +169,7 @@ def add_user(reg_users):
         (name, calorie_goal, start_date, starting_weight, calorie_goal))
     connection.commit()
     connection.close()
-    clear_terminal()
+    display_function.clear_terminal()
     print(f"\nGreat {name}! Your profile has successfully been added :)")
     print("_"*75)
 

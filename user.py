@@ -13,7 +13,7 @@ class User:
         
     def on_login(self):
         self.fetch_db_user_data() # has to be called before add_new_row_if_necessary. Otherwise User attributes are'nt retrieved which are used in add_new_row_if_necessary -> Error
-        add_new_row_if_necessary(user=self) #creates new tracking record if necessary
+        add_new_row_if_necessary(user=self) #creates new record in DB table Tracking if necessary
 
     def fetch_db_user_data(self):
         
@@ -114,10 +114,6 @@ if __name__ == "__main__":
     current_date = date.today()
     user = User(name, current_date)
     print(user.user_info())
-
-
-
-
 
 
 class UserCalories:

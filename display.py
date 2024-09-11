@@ -1,8 +1,9 @@
 
 from user import User
-from general_functions import clear_terminal
+from display_functions import DisplayFunctions
 from row_management import add_new_row_if_necessary
 import functionalities
+display_function = DisplayFunctions()
 class Display():
     def __init__(self):
         pass
@@ -38,7 +39,7 @@ class Display():
             if user_cmd not in [1, 2, 3, 4, 5, 6, 7]:
                 print("please enter a valid selection")
             else:
-                clear_terminal()
+                display_function.clear_terminal()
                 print(f"\nselected to {pos_cmds[user_cmd]}...\n")
                 break
         if user_cmd == 1:
